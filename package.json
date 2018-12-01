@@ -1,0 +1,31 @@
+{
+  "name": "svalim",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "_moduleAliases": {
+    "@models": "server/models",
+    "@routes": "server/routes",
+    "@lib": "server/lib",
+    "@controllers": "server/routes/controllers",
+    "@socket-controllers": "server/socket-controllers",
+    "@configuration": "server/configuration",
+    "@root": "server",
+    "@project_root": ".",
+    "@test": "test"
+  },
+  "scripts": {
+    "server-prod": "cross-env NODE_ENV=production nodemon index.js",
+    "server-dev": "cross-env NODE_ENV=dev nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cross-env": "^5.2.0",
+    "express": "^4.16.4",
+    "fs": "0.0.1-security",
+    "ip": "^1.1.5",
+    "module-alias": "^2.1.0"
+  }
+}
