@@ -70,7 +70,7 @@ class App {
 
     applyRouters(express) {
         if (!express) {
-            logger.error('Could not apply routers');
+            logger.fatal('Could not apply routers');
             process.exit(4);
         }
 
