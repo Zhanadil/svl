@@ -5,6 +5,10 @@ const https = require('https');
 const ip = require('ip');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
+
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const parseurl = require('parseurl');
 const mongoose = require('mongoose');
 const MongoStore = require('connect-mongo')(session);
 
@@ -43,7 +47,7 @@ class App {
             auth: {
                 authSource: "admin"
             },
-            useNewUrlParser: true
+            useNewUrlParser: true,
         };
         if (this.env !== 'production') {
             connectionOptions.auth = undefined;
@@ -108,6 +112,13 @@ class App {
         // Логгер обязательно должен быть вызван после создания папок с логами
         // Иначе может крашнуться.
         express.use(require('@root/lib/logger').expressLogger);
+
+        express.use(session({
+            secret: config.sessionSecret,
+            resave: false,
+            saveUninitialized: true,
+            store: new MongoStore({ mongooseConnection: mongoose.connection })
+        }));
 
         // Подключаем роутеры
         express.use('/api', router);
