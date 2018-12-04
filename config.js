@@ -13,6 +13,12 @@ const config = convict({
         arg: 'nodeEnv',
         env: 'NODE_ENV'
     },
+    DBHost: {
+        format: String,
+        default: '__FATAL__',
+        arg: 'DBHost',
+        env: 'DBHost',
+    },
     httpPort: {
         format: 'int',
         default: 3000,
@@ -21,7 +27,7 @@ const config = convict({
     },
     logsDirectory: {
         format: String,
-        default: '__ERROR__',
+        default: '__FATAL__',
         arg: 'logsDirectory',
         env: 'LOGS_DIRECTORY'
     },
