@@ -11,19 +11,31 @@ const config = convict({
         format: ['prod', 'dev', 'test'],
         default: 'dev',
         arg: 'nodeEnv',
-        env: 'NODE_ENV'
+        env: 'NODE_ENV',
+    },
+    DBHost: {
+        format: String,
+        default: '__FATAL__',
+        arg: 'DBHost',
+        env: 'DBHost',
     },
     httpPort: {
         format: 'int',
         default: 3000,
         arg: 'httpPort',
-        env: 'HTTP_PORT'
+        env: 'HTTP_PORT',
     },
     logsDirectory: {
         format: String,
-        default: '__ERROR__',
+        default: '__FATAL__',
         arg: 'logsDirectory',
-        env: 'LOGS_DIRECTORY'
+        env: 'LOGS_DIRECTORY',
+    },
+    sessionSecret: {
+        format: String,
+        default: 'default secret',
+        arg: 'sessionSecret',
+        env: 'SESSION_SECRET',
     },
 });
 

@@ -6,6 +6,12 @@ const ip = require('ip');
 const mkdirp = require('mkdirp');
 const fs = require('fs');
 
+const cookieParser = require('cookie-parser');
+const session = require('express-session');
+const parseurl = require('parseurl');
+const mongoose = require('mongoose');
+const MongoStore = require('connect-mongo')(session);
+
 const router = require('@routes');
 
 const config = require('@project_root/config');
@@ -15,8 +21,8 @@ class App {
     constructor() {
         let configError = this.checkConfigs();
         if (configError) {
-            console.log(configError);
-            process.exit(2);
+            logger.fatal(configError);
+            process.exit(1);
         }
 
         this.env = config.env;
@@ -35,6 +41,30 @@ class App {
         // Создаем папки с логами и ресурсами если их нет.
         this.ensureDirectories();
 
+        // Подключаем базу данных
+        mongoose.Promise = global.Promise;
+        let connectionOptions = {
+            auth: {
+                authSource: "admin"
+            },
+            useNewUrlParser: true,
+        };
+        if (this.env !== 'production') {
+            connectionOptions.auth = undefined;
+        }
+        mongoose.connect(
+            config.DBHost,
+            connectionOptions,
+            (err, db) => {
+                if(err){
+                    logger.error(err);
+                    logger.fatal('Could not connect to mongodb');
+                    process.exit(1);
+                }
+                this.applyRouters(this.express);
+            }
+        )
+
         this.express = express();
         this.httpServer = http.createServer(this.express);
         // this.server = https.createServer(this.sslCredentials, this.express);
@@ -44,8 +74,10 @@ class App {
 
     // Проверяем, что все конфигурации верны
     checkConfigs() {
-        if (config.logsDirectory === '__ERROR__') {
-            return 'Logs directory path has not been declared';
+        for (let key in config) {
+            if (config[key] === '__FATAL__') {
+                return `${key} configuration is not set`;
+            }
         }
 
         return null;
@@ -80,6 +112,13 @@ class App {
         // Логгер обязательно должен быть вызван после создания папок с логами
         // Иначе может крашнуться.
         express.use(require('@root/lib/logger').expressLogger);
+
+        express.use(session({
+            secret: config.sessionSecret,
+            resave: false,
+            saveUninitialized: true,
+            store: new MongoStore({ mongooseConnection: mongoose.connection })
+        }));
 
         // Подключаем роутеры
         express.use('/api', router);
