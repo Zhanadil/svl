@@ -113,6 +113,7 @@ class App {
         // Иначе может крашнуться.
         express.use(require('@root/lib/logger').expressLogger);
 
+        express.set('trust proxy', 1);
         express.use(session({
             secret: config.sessionSecret,
             resave: false,
