@@ -56,4 +56,34 @@ module.exports = {
 
         next();
     },
+
+    validateAdmin: async (req, res, next) => {
+        if (!req.session.userId) {
+            return res.status(403).send('User is not logged in');
+        }
+
+        // Находим пользователя по айди сохраненному в сессии
+        const [err, user] = await to(
+            User.findById(req.session.userId)
+            .select('+isAdmin')
+        );
+        if (err) {
+            req.log.error('User.findById throwed an error');
+            return next(err);
+        }
+        if (!user) {
+            req.log.warning(`Userid [${req.session.userId}] in session data is incorrect`);
+            return res.status(403).send('User is not logged in');
+        }
+
+        if (!user.isAdmin) {
+            req.log.info('User has no admin rights');
+            return res.status(403).send('Unauthorized');
+        }
+
+        // Передаем пользователя далее
+        req.user = user;
+
+        next();
+    },
 };
