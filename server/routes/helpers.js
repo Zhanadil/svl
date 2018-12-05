@@ -1,4 +1,7 @@
 const joi = require('joi');
+const to = require('await-to-js').default;
+
+const User = require('@models/user');
 
 module.exports = {
     // Валидатор тела запросов, проверяет что запрос подходит по значениям
@@ -30,10 +33,26 @@ module.exports = {
     },
 
     // Проверяет куки
-    validateUser: (req, res, next) => {
-        if (!req.session.user) {
+    validateUser: async (req, res, next) => {
+        if (!req.session.userId) {
             return res.status(403).send('User is not logged in');
         }
+
+        // Находим пользователя по айди сохраненному в сессии
+        const [err, user] = await to(
+            User.findById(req.session.userId)
+        );
+        if (err) {
+            req.log.error('User.findById throwed an error');
+            return next(err);
+        }
+        if (!user) {
+            req.log.warning(`Userid [${req.session.userId}] in session data is incorrect`);
+            return res.status(403).send('User is not logged in');
+        }
+
+        // Передаем пользователя далее
+        req.user = user;
 
         next();
     },
