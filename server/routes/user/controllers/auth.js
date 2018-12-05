@@ -10,7 +10,7 @@ const saveSession = (session, user) => {
     // ВАЖНО:
     // Сами данные пользователя не будут сохранены в куки, только токен.
     // Данные будут сохранены на сервере.
-    session.user = user;
+    session.userId = user._id;
     session.maxAge = 1000 * 60 * 60 * 24; // Одни сутки в миллисекундах
 }
 
@@ -24,7 +24,6 @@ signUp: async (req, res, next) => {
         User.findOne({
             'credentials.email': req.body.email
         })
-        .select('+credentials.password')
     );
     if (err) {
         req.log.error('User.findOne throwed an error');
@@ -76,6 +75,7 @@ signIn: async (req, res, next) => {
             'credentials.email': req.body.email
         })
         .select('+credentials.password')
+        .select('+isAdmin')
     );
     if (err) {
         req.log.error('User.findOne throwed an error');
@@ -96,8 +96,13 @@ signIn: async (req, res, next) => {
 
     saveSession(req.session, user);
 
-    req.log.info(`User [${req.body.email}] logged in`);
-    return res.sendStatus(200);
+    if (!user.isAdmin) {
+        req.log.info(`User [${req.body.email}] logged in`);
+        return res.sendStatus(200);
+    }
+
+    req.log.info(`Admin [${req.body.email}] logged in`);
+    return res.status(200).send("admin");
 },
 
 };

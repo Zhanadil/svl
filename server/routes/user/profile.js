@@ -11,9 +11,10 @@ const router = express.Router();
 router.use(helpers.validateUser);
 
 // Возвращаем профиль
-// На данный момент используется только для проверки сессии
 router.get('/', async (req, res, next) => {
-    return res.sendStatus(200);
+    return res.status(200).json({
+        user: req.user
+    });
 });
 
 module.exports = router;
