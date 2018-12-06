@@ -28,4 +28,26 @@ createJob: async (req, res, next) => {
     });
 },
 
+// Создание инфо о слайде
+createSlideInfo: async (req, res, next) => {
+    const slide = Models.SlideInfo(req.body);
+
+    const [err] = await to(
+        slide.save()
+    );
+    if (err) {
+        req.log.error('Slide info could not be created');
+        return next(err);
+    }
+
+    req.log.info({
+        log_info: {
+            slide
+        }
+    }, 'Slide info successfuly created');
+    return res.status(200).json({
+        slide
+    });
+},
+
 };

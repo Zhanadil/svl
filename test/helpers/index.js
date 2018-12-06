@@ -21,4 +21,19 @@ createJob: () => {
     };
 },
 
+createSlideInfo: () => {
+    return {
+        page: faker.random.number({
+            min: 1,
+            max: 10,
+        }),
+        capitalText: faker.lorem.word(),
+        mainText: faker.lorem.words(),
+        additionalText: faker.lorem.sentence(),
+        requirements: {
+            branch: faker.lorem.word(),
+        },
+    };
+},
+
 };

@@ -14,4 +14,10 @@ router.route('/job')
         controllers.createJob
     );
 
+router.put(
+    '/slide-info',
+    helpers.validateBody(validators.createSlideInfo),
+    controllers.createSlideInfo
+);
+
 module.exports = router;

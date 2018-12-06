@@ -24,4 +24,15 @@ getAllOccupations: async (req, res, next) => {
     return res.status(200).json(results);
 },
 
+// Возвращаем инфо о слайде
+getSlideInfo: async (req, res, next) => {
+    const [err, slides] = await to(
+        Models.SlideInfo.find({
+            page: req.params.page
+        })
+    );
+
+    return res.status(200).json(slides);
+},
+
 };

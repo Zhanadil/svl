@@ -3,6 +3,8 @@ require('module-alias/register');
 const mongoose = require("mongoose");
 const Models = require('@models');
 
+const helpers = require('@test/helpers');
+
 const faker = require('faker');
 const config = require('@project_root/config');
 const chai = require('chai');
@@ -107,6 +109,55 @@ describe('Admin methods', () => {
                     // Делаем запрос на создание
                     agent.put('/api/admin/job/')
                         .send(newJob)
+                        .then((res) => {
+                            res.should.have.status(200);
+                            agent.close();
+                            done();
+                        });
+                });
+        });
+    });
+
+    describe('Create SlideInfo', () => {
+        // Только пользователь с правами админа может создавать новый текст слайда
+        it('it should not create new slide info without admin rights', (done) => {
+            const newSlideInfo = helpers.createSlideInfo();
+
+            let agent = chai.request.agent(server);
+
+            // Входим как не админ
+            agent.post('/api/user/auth/signin')
+                .send(nonAdmin)
+                .then(function(res) {
+                    res.should.have.status(200);
+                    res.should.have.cookie('connect.sid');
+
+                    // Делаем запрос на создание
+                    agent.put('/api/admin/slide-info/')
+                        .send(newSlideInfo)
+                        .then((res) => {
+                            res.should.have.status(403);
+                            agent.close();
+                            done();
+                        });
+                });
+        });
+
+        it('it should be able to create new slide info', (done) => {
+            const newSlideInfo = helpers.createSlideInfo();
+
+            let agent = chai.request.agent(server);
+
+            // Входим как админ
+            agent.post('/api/user/auth/signin')
+                .send(admin)
+                .then(function(res) {
+                    res.should.have.status(200);
+                    res.should.have.cookie('connect.sid');
+
+                    // Делаем запрос на создание
+                    agent.put('/api/admin/slide-info/')
+                        .send(newSlideInfo)
                         .then((res) => {
                             res.should.have.status(200);
                             agent.close();
