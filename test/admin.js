@@ -48,6 +48,7 @@ describe('Admin methods', () => {
     });
 
     describe('Create Job', () => {
+        // Вспомогательная функция
         const createJob = () => {
             return {
                 occupation: faker.name.jobType(),
@@ -67,6 +68,7 @@ describe('Admin methods', () => {
             };
         }
 
+        // Только пользователь с правами админа может создавать новую профессию
         it('it should not create new job without admin rights', (done) => {
             const newJob = createJob();
 
@@ -79,7 +81,7 @@ describe('Admin methods', () => {
                     res.should.have.status(200);
                     res.should.have.cookie('connect.sid');
 
-                    // Делаем запрос профиля
+                    // Делаем запрос на создание
                     agent.put('/api/admin/job/')
                         .send(newJob)
                         .then((res) => {
@@ -102,7 +104,7 @@ describe('Admin methods', () => {
                     res.should.have.status(200);
                     res.should.have.cookie('connect.sid');
 
-                    // Делаем запрос профиля
+                    // Делаем запрос на создание
                     agent.put('/api/admin/job/')
                         .send(newJob)
                         .then((res) => {
