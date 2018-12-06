@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 const config = require('@project_root/config');
 
-// Схема информации о профессии
-const jobSchema = mongoose.Schema({
+// Схема информации о слайде
+const slideInfoSchema = mongoose.Schema({
     page: Number,
     capitalText: String,
     mainText: String,
@@ -12,4 +12,4 @@ const jobSchema = mongoose.Schema({
     },
 });
 
-module.exports = jobSchema;
+module.exports = slideInfoSchema;
