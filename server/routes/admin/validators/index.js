@@ -10,4 +10,14 @@ createJob: joi.object().keys({
     ticketCost: joi.number().min(0).required(),
 }),
 
+createSlideInfo: joi.object().keys({
+    page: joi.number().required(),
+    capitalText: joi.string(),
+    mainText: joi.string(),
+    additionalText: joi.string(),
+    requirements: joi.object().keys({
+        branch: joi.string(),
+    }),
+}),
+
 };

@@ -6,4 +6,9 @@ const router = express.Router();
 
 router.get('/occupations', controllers.getAllOccupations);
 
+router.get(
+    '/slide-info/:page',
+    controllers.getSlideInfo
+);
+
 module.exports = router;
