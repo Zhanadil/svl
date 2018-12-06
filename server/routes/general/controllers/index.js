@@ -35,4 +35,22 @@ getSlideInfo: async (req, res, next) => {
     return res.status(200).json(slides);
 },
 
+// Считает кол-во профессиий по образованию
+getJobNumber: async (req, res, next) => {
+    const [err, jobs] = await to(
+        Models.Job.find({
+            occupation: req.body.occupation
+        })
+    );
+    if (err) {
+        req.log.error('Could not count number of jobs');
+        return next(err);
+    }
+
+    req.log.info(`${jobs.length} jobs counted`);
+    return res.status(200).json({
+        res: jobs.length
+    });
+},
+
 };
