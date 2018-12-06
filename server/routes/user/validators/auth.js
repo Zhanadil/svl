@@ -1,7 +1,5 @@
 const joi = require('joi');
 
-const User = require('@models/user');
-
 module.exports = {
 
 signUp: joi.object().keys({
